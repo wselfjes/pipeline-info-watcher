@@ -1,20 +1,51 @@
-name:                pipeline-info-watcher
-version:             0.1.0.0
+cabal-version:      2.4
+name:               pipeline-info-watcher
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
 -- synopsis:
+
+-- A longer description of the package.
 -- description:
-homepage:            https://github.com/wselfjes/pipeline-info-watcher#readme
-license:             BSD3
-license-file:        LICENSE
-author:              Andrey Chertkov
-maintainer:          andreychertckov@gmail.com
-copyright:           2021 Andrey Chertkov
-category:            Web
-build-type:          Simple
-cabal-version:       >=1.10
-extra-source-files:  README.md
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             wself
+maintainer:         andreychertckov@gmail.com
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files:
+    CHANGELOG.md
+    README.md
+
+library
+    exposed-modules: PipelineWatcher, Data.Git, Data.List.FixedList, Data.Either.Utils 
+
+    -- Modules included in this library but not exported.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:    base ^>=4.14.3.0
+    hs-source-dirs:   src
+    default-language: Haskell2010
 
 executable pipeline-info-watcher
-  hs-source-dirs:      src
-  main-is:             Main.hs
-  default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:
+        base ^>=4.14.3.0,
+        pipeline-info-watcher
+
+    hs-source-dirs:   app
+    default-language: Haskell2010
