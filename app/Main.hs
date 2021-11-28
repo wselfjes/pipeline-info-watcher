@@ -7,4 +7,4 @@ import           PipelineWatcher
 
 
 main :: IO ()
-main = displayPipeline $ watchPipeline (GitlabOrigin "test") (unsafeFromEither $ makeCommit "test")
+main = stdoutPipelineWatcherWithAutoSelect (GitlabOrigin "test") (unsafeFromEither $ makeCommit "4444444444444444444444444444444444444444")
