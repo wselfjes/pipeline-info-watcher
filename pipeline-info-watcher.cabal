@@ -24,7 +24,7 @@ extra-source-files:
     README.md
 
 library
-    exposed-modules: PipelineWatcher, Data.Git, Data.List.FixedList, Data.Either.Utils 
+    exposed-modules: PipelineWatcher, Data.Git, Data.List.FixedList, Data.Either.Utils, Data.Gitlab.ApiReader
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -34,7 +34,9 @@ library
     build-depends:    
       base ^>=4.14.3.0,
       req >= 3.9.2,
-      aeson >=2.0.1.0
+      aeson >= 2.0.1.0,
+      scientific >= 0.3.7.0,
+      text >= 1.2.4.1
     hs-source-dirs:   src
     default-language: Haskell2010
 
@@ -49,6 +51,8 @@ executable pipeline-info-watcher
     build-depends:
         base ^>=4.14.3.0,
         req >= 3.9.2,
+        text >= 1.2.4.1,
+        scientific >= 0.3.7.0,
         pipeline-info-watcher
 
     hs-source-dirs:   app

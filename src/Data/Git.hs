@@ -1,6 +1,10 @@
-{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DataKinds                  #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module Data.Git where
+
+import           Data.Aeson
+import qualified Data.Text           as T
 
 import           Data.List.FixedList as Fl
 import           Data.String         (IsString (..))
@@ -10,11 +14,15 @@ import           Data.String         (IsString (..))
 
 newtype Commit = Commit
   { getCommitId :: FixedList 40 Char
-  }
+  } deriving (Eq)
 
 newtype ShortCommit = ShortCommit
   { getShortCommitId :: FixedList 7 Char
   }
+
+newtype Project = Project
+  { projectId :: String
+  } deriving Show
 
 data Origin
   = GithubOrigin
@@ -25,14 +33,23 @@ data Origin
       }
   deriving (Show)
 
+newtype PipelineId = PipelineId {getPId :: Int} deriving (FromJSON, Show)
+
 data PipelineInfo = PipelineInfo
-  { getOrigin :: Origin
-  , getCommit :: Commit
-  }
+  { getOrigin     :: Origin
+  , getProject    :: Project
+  , getCommit     :: Commit
+  , getPipelineId :: PipelineId
+  , getStatus     :: String
+  , getWebUrl     :: String
+  } deriving Show
 
 
 instance IsString Commit where
   fromString = Commit . fromString
+
+instance FromJSON Commit where
+  parseJSON = withText "commit" $ return . (fromString . T.unpack)
 
 instance (Show Commit) where
   show = show . Fl.getFixedList . getCommitId

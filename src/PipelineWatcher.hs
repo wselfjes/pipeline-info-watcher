@@ -1,42 +1,44 @@
 module PipelineWatcher where
 
-import           Data.Git (Commit, Origin (..), PipelineInfo (..))
+import           Data.Git              (Commit, Origin (..), PipelineInfo (..),
+                                        Project (..), PipelineId (..))
 import qualified Data.Gitlab.ApiReader as GL
 
 
-selectPipelineIntegration :: Origin -> (Origin -> Commit -> IO PipelineInfo)
+selectPipelineIntegration :: Origin -> (Origin -> Project -> Commit -> IO PipelineInfo)
 selectPipelineIntegration (GitlabOrigin _) = GL.getPipelineInfo
 selectPipelineIntegration (GithubOrigin _) = getPipelineInfo
 
-getPipelineInfo :: Origin -> Commit -> IO PipelineInfo
-getPipelineInfo o c = return (PipelineInfo o c)
+getPipelineInfo :: Origin -> Project -> Commit -> IO PipelineInfo
+getPipelineInfo o p c = return (PipelineInfo o p c (PipelineId 1) "succeded" "www.google.com")
 
 displayPipelineStdout
   :: PipelineInfo
   -> IO ()
 displayPipelineStdout pipeline =
   do
-    print (getOrigin pipeline)
-    print (getCommit pipeline)
+    print pipeline
 
 
 stdoutPipelineWatcherWithAutoSelect
   :: Origin
+  -> Project
   -> Commit
   -> IO ()
-stdoutPipelineWatcherWithAutoSelect o = 
+stdoutPipelineWatcherWithAutoSelect o =
   pipelineWatcher (selectPipelineIntegration o) displayPipelineStdout o
 
 
 pipelineWatcher
   :: (Monad m)
-  => (Origin -> Commit -> m PipelineInfo)
+  => (Origin -> Project -> Commit -> m PipelineInfo)
   -> (PipelineInfo -> m a)
   -> Origin
+  -> Project
   -> Commit
   -> m a
 pipelineWatcher
- getInfo display o c =
+ getInfo display o p c =
   do
-    info <-getInfo o c
+    info <- getInfo o p c
     display info

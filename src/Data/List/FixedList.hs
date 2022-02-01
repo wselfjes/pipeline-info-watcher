@@ -22,7 +22,6 @@ newtype FixedList (n :: Nat) a = FixedList
 instance (KnownNat n) => IsString (FixedList n Char) where
   fromString = unsafeFromEither . listToFixedList
 
-
 listToFixedList
   :: forall n a.  KnownNat n
   => [a]
