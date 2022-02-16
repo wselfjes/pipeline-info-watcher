@@ -3,7 +3,7 @@
 
 module Data.Git where
 
-import           Data.Aeson
+import qualified Data.Aeson          as Ae
 import qualified Data.Text           as T
 
 import           Data.List.FixedList as Fl
@@ -33,14 +33,38 @@ data Origin
       }
   deriving (Show)
 
-newtype PipelineId = PipelineId {getPId :: Int} deriving (FromJSON, Show)
+data Status = Created
+            | WaitingForResource
+            | Preparing
+            | Pending
+            | Running
+            | Success
+            | Failed
+            | Canceled
+            | Skipped
+            | Manual
+            | Scheduled deriving Show
+
+isTerminal Created            = False
+isTerminal WaitingForResource = False
+isTerminal Preparing          = False
+isTerminal Pending            = False
+isTerminal Running            = False
+isTerminal Success            = True
+isTerminal Failed             = True
+isTerminal Canceled           = True
+isTerminal Skipped            = True
+isTerminal Manual             = True
+isTerminal Scheduled          = False
+
+newtype PipelineId = PipelineId {getPId :: Int} deriving (Ae.FromJSON, Show)
 
 data PipelineInfo = PipelineInfo
   { getOrigin     :: Origin
   , getProject    :: Project
   , getCommit     :: Commit
   , getPipelineId :: PipelineId
-  , getStatus     :: String
+  , getStatus     :: Status
   , getWebUrl     :: String
   } deriving Show
 
@@ -48,8 +72,8 @@ data PipelineInfo = PipelineInfo
 instance IsString Commit where
   fromString = Commit . fromString
 
-instance FromJSON Commit where
-  parseJSON = withText "commit" $ return . (fromString . T.unpack)
+instance Ae.FromJSON Commit where
+  parseJSON = Ae.withText "commit" $ return . (fromString . T.unpack)
 
 instance (Show Commit) where
   show = show . Fl.getFixedList . getCommitId
